@@ -17,13 +17,17 @@ public class BlackjackPlayer implements PlayerInterface {
         this.wager = 0;
     }
 
-    public void placeBet(double amount) {
-        if (amount <= 0) {
-            console.println("Bet must be greater than zero.");
+    public void placeBet(double amount, double min, double max) {
+        if (amount < min) {
+            console.println("Minimum bet is $%.2f.", min);
+            return;
+        }
+        if (amount > max) {
+            console.println("Maximum bet is $%.2f.", max);
             return;
         }
         if (amount > casinoAccount.getBalance()) {
-            console.println("Not enough funds. Your balance is $%.2f", 
+            console.println("Not enough funds. Your balance is $%.2f",
                 casinoAccount.getBalance());
             return;
         }
@@ -43,9 +47,10 @@ public class BlackjackPlayer implements PlayerInterface {
             console.println("\nYour hand: %s", hand.toString());
             String choice = console.getStringInput("Hit or stand? (h/s): ");
             if (choice.equalsIgnoreCase("s")) {
+                stay();
                 break;
             } else if (choice.equalsIgnoreCase("h")) {
-                hand.addCard(deck.drawCard());
+                hit(deck);
                 if (hand.isBust()) {
                     console.println("Your hand: %s", hand.toString());
                     console.println("Bust! You went over 21.");
@@ -57,9 +62,37 @@ public class BlackjackPlayer implements PlayerInterface {
         }
     }
 
+    public void hit(Deck deck) {
+        hand.addCard(deck.deal());
+    }
+
+    public void stay() {
+        console.println("%s stands with %s", casinoAccount.getUsername(), hand.toString());
+    }
+
+    public void doubleDown(Deck deck) {
+        double extra = Math.min(wager, casinoAccount.getBalance());
+        casinoAccount.withdrawBalance(extra);
+        wager += extra;
+        console.println("Doubled down! New wager: $%.2f", wager);
+        hit(deck);
+    }
+
+    public String askWhichOne() {
+        return console.getStringInput("Hit or stand? (h/s): ");
+    }
+
     @Override
     public CasinoAccount getArcadeAccount() {
         return casinoAccount;
+    }
+
+    public CasinoAccount fetchCasinoAccount() {
+        return casinoAccount;
+    }
+
+    public double getBalance() {
+        return casinoAccount.getBalance();
     }
 
     public BlackjackHand getHand()  { return hand; }
