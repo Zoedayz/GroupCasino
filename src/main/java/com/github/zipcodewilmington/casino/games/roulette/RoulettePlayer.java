@@ -1,7 +1,5 @@
-package com.github.zipcodewilmington.casino.games;
+package com.github.zipcodewilmington.casino.games.roulette;
 import com.github.zipcodewilmington.casino.CasinoAccount;
-
-//lofi
 
 public class RoulettePlayer {
     private CasinoAccount account;
@@ -13,7 +11,7 @@ public class RoulettePlayer {
         this.account = account;
     }
 
-    public CasinoAccount geAccount() {
+    public CasinoAccount getAccount() {
         return account;
     }
 

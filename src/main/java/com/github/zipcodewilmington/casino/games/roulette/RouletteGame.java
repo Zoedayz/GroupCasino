@@ -138,7 +138,9 @@ public class RouletteGame implements GameInterface {
 
     @Override
     public void removePlayer(PlayerInterface player) {
+        if (scanner != null) {
+            scanner.close();
+        }
         this.player = null;
     }
 }
-//review 
