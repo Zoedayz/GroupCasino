@@ -3,22 +3,20 @@ package com.github.zipcodewilmington.casino.games.roulette;
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.casino.games.RoulettePlayer;
+import com.github.zipcodewilmington.casino.games.RouletteWheel;
 
-import java.util.Random;
 import java.util.Scanner;
 
 public class RouletteGame implements GameInterface {
 
-    private static final int[] RED_NUMBERS = {
-        1, 3, 5, 7, 9, 12, 14, 16, 18, 19,
-        21, 23, 25, 27, 30, 32, 34, 36
-    };
-
     private RoulettePlayer player;
-    private Scanner scanner;
+    private final Scanner scanner;
+    private final RouletteWheel wheel; // Your Wheel class integrated here
 
     public RouletteGame() {
         this.scanner = new Scanner(System.in);
+        this.wheel = new RouletteWheel(); // Initialize the wheel
     }
 
     @Override
@@ -28,18 +26,15 @@ public class RouletteGame implements GameInterface {
 
     @Override
     public void play() {
+        if (player == null) return;
+
         System.out.println("\n==== ROULETTE ====");
         System.out.println("Balance: $" + player.getAccount().getBalance());
         System.out.print("Enter bet amount: $");
         double betAmount = scanner.nextDouble();
 
-        if (betAmount <= 0) {
-            System.out.println("Bet must be greater than $0. Returning to lobby...");
-            return;
-        }
-
-        if (betAmount > player.getAccount().getBalance()) {
-            System.out.println("Not enough funds! Returning to lobby...");
+        if (betAmount <= 0 || betAmount > player.getAccount().getBalance()) {
+            System.out.println("Invalid bet amount. Returning to lobby...");
             return;
         }
 
@@ -53,48 +48,38 @@ public class RouletteGame implements GameInterface {
         String betType = "";
         int betNumber = -1;
 
+        // Process user input for the bet
         switch (choice) {
             case 1:
                 System.out.print("Pick a number (0-36): ");
                 betNumber = scanner.nextInt();
-                if (betNumber < 0 || betNumber > 36) {
-                    System.out.println("Invalid number! Returning to lobby...");
-                    return;
-                }
+                if (betNumber < 0 || betNumber > 36) return;
                 betType = "number";
                 break;
             case 2:
-                System.out.print("Type red or black: ");
+                System.out.print("Type 'red' or 'black': ");
                 betType = scanner.next().toLowerCase();
-                if (!betType.equals("red") && !betType.equals("black")) {
-                    System.out.println("Invalid choice! Returning to lobby...");
-                    return;
-                }
                 break;
             case 3:
-                System.out.print("Type even or odd: ");
+                System.out.print("Type 'even' or 'odd': ");
                 betType = scanner.next().toLowerCase();
-                if (!betType.equals("even") && !betType.equals("odd")) {
-                    System.out.println("Invalid choice! Returning to lobby...");
-                    return;
-                }
                 break;
             default:
-                System.out.println("Invalid choice! Returning to lobby...");
+                System.out.println("Invalid choice!");
                 return;
         }
 
-        player.setBetAmount(betAmount);
-        player.setBetType(betType);
-        player.setBetNumber(betNumber);
-
-        int result = spinWheel();
-        String resultColor = isRed(result) ? "Red" : (result == 0 ? "Green" : "Black");
-
+        // 1. Spin the wheel
         System.out.println("\n--- Spinning the wheel... ---");
-        System.out.println("Result: " + result + " (" + resultColor + ")");
+        wheel.spin(); 
+        
+        int resultNum = wheel.getLastSpinNumber();
+        String resultColor = wheel.getLastSpinColor();
 
-        if (isWin(result, betType, betNumber)) {
+        System.out.println("RESULT: " + resultColor + " " + resultNum);
+
+        // 2. Check for win using the Wheel's state
+        if (checkWin(betType, betNumber)) {
             double winnings = calculateWinnings(betAmount, betType);
             player.getAccount().deposit(winnings);
             System.out.println("YOU WIN! + $" + winnings);
@@ -106,39 +91,29 @@ public class RouletteGame implements GameInterface {
         System.out.println("New balance: $" + player.getAccount().getBalance());
     }
 
-    public int spinWheel() {
-        return new Random().nextInt(37);
-    }
-
-    public boolean isWin(int result, String betType, int betNumber) {
+    private boolean checkWin(String betType, int betNumber) {
         switch (betType) {
-            case "number": return result == betNumber;
-            case "red":    return isRed(result);
-            case "black":  return !isRed(result) && result != 0;
-            case "even":   return result != 0 && result % 2 == 0;
-            case "odd":    return result % 2 == 1;
-            default:       return false;
+            case "number": 
+                return wheel.getLastSpinNumber() == betNumber;
+            case "red":    
+                return wheel.getLastSpinColor().equalsIgnoreCase("red");
+            case "black":  
+                return wheel.getLastSpinColor().equalsIgnoreCase("black");
+            case "even":   
+                return wheel.lastSpinWasEven();
+            case "odd":    
+                return wheel.lastSpinWasOdd();
+            default:       
+                return false;
         }
     }
 
-    public double calculateWinnings(double betAmount, String betType) {
-        if (betType.equals("number")) {
-            return betAmount * 35;
-        } else {
-            return betAmount * 2;
-        }
-    }
-
-    public boolean isRed(int number) {
-        for (int red : RED_NUMBERS) {
-            if (number == red) return true;
-        }
-        return false;
+    private double calculateWinnings(double betAmount, String betType) {
+        return betType.equals("number") ? betAmount * 35 : betAmount * 2;
     }
 
     @Override
     public void removePlayer(PlayerInterface player) {
-        this.player = null;
+        this.player = null; // Important for Garbage Collection requirement
     }
 }
-//review 
