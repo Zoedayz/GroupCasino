@@ -1,12 +1,14 @@
 package com.github.zipcodewilmington.casino.games.slots;
+
 import com.github.zipcodewilmington.casino.PlayerInterface;
 import com.github.zipcodewilmington.casino.CasinoAccount;
+
 /**
  * Created by leon on 7/21/2020.
  */
 public class SlotsPlayer implements PlayerInterface {
     private String name;
-    private CasinoAccount account;// replaced. double balance of my own so it will take into account for what the casino account for the player has, to place bets.
+    private CasinoAccount account;
 
     public SlotsPlayer(String name, CasinoAccount account) {
         this.name = name;
@@ -24,7 +26,14 @@ public class SlotsPlayer implements PlayerInterface {
 
     public String getName() { return name; }
 
-    public double getBalance() { return account.getActiveBalance(); }
+    public double getBalance() { return account.getBalance(); }
 
-    public void setBalance(double amount) { account.setActiveBalance(amount); }
+    public void setBalance(double newBalance) {
+        double current = account.getBalance();
+        if (newBalance > current) {
+            account.depositToBalance(newBalance - current);
+        } else if (newBalance < current) {
+            account.withdrawBalance(current - newBalance);
+        }
+    }
 }

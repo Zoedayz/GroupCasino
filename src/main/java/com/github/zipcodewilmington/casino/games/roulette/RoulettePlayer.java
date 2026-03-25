@@ -1,9 +1,9 @@
-package com.github.zipcodewilmington.casino.games;
+package com.github.zipcodewilmington.casino.games.roulette;
+
 import com.github.zipcodewilmington.casino.CasinoAccount;
+import com.github.zipcodewilmington.casino.PlayerInterface;
 
-//lofi
-
-public class RoulettePlayer {
+public class RoulettePlayer implements PlayerInterface {
     private CasinoAccount account;
     private int betNumber;
     private String betType;
@@ -13,8 +13,18 @@ public class RoulettePlayer {
         this.account = account;
     }
 
-    public CasinoAccount geAccount() {
+    public CasinoAccount getAccount() {
         return account;
+    }
+
+    @Override
+    public CasinoAccount getArcadeAccount() {
+        return account;
+    }
+
+    @Override
+    public <SomeReturnType> SomeReturnType play() {
+        return null; // turn logic handled in RouletteGame
     }
 
     public int getBetNumber() {

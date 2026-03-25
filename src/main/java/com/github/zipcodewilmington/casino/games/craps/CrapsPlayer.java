@@ -15,15 +15,29 @@ public class CrapsPlayer implements PlayerInterface {
     public CrapsPlayer(CasinoAccount casinoAccount) {
         this.casinoAccount = casinoAccount;
         this.wager = 0;
-        this.rates = new double[]{};  // TODO: define payout rates for each bet type
+        this.rates = new double[]{ 1.0, 2.0 }; // index 0 = pass line (1:1), index 1 = come-out natural (2:1)
     }
 
     public void placeBet(double amount, double min, double max) {
-        // TODO: validate amount against min/max and balance, then deduct from account
+        if (amount < min) {
+            console.println("Minimum bet is $%.2f.", min);
+            return;
+        }
+        if (amount > max) {
+            console.println("Maximum bet is $%.2f.", max);
+            return;
+        }
+        if (amount > casinoAccount.getBalance()) {
+            console.println("Not enough funds. Your balance is $%.2f", casinoAccount.getBalance());
+            return;
+        }
+        this.wager = amount;
+        casinoAccount.withdrawBalance(amount);
+        console.println("Bet placed: $%.2f", wager);
     }
 
     public void rollDice() {
-        // TODO: prompt player to roll (press enter), used as a trigger in the game loop
+        console.getStringInput("Press ENTER to roll the dice...");
     }
 
     public double[] getRates() {
