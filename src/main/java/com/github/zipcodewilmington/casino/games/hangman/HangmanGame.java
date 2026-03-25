@@ -1,7 +1,7 @@
 package com.github.zipcodewilmington.casino.games.hangman;
+
 import java.util.HashSet;
 import java.util.Set;
-
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
 
@@ -10,11 +10,79 @@ public class HangmanGame implements GameInterface {
     private String secretWord;
     private Set<Character> guessedLetters = new HashSet<>();
     private int maxIncorrectGuesses = 6;
-    private String[] words = {"casino", "hangman", "player"};
+    private String getRandomWord() {
+        try {
+            java.net.URL url = new java.net.URL("https://random-word-api.herokuapp.com/word?number=1");
+            String response = new String(url.openStream().readAllBytes());
+            return response.replaceAll("[\\[\\]\"]", ""); // Clean up the response
+        } catch (Exception e) {
+            String[]fallback = {"casino", "hangman", "Haha"};
+            return fallback[(int)(Math.random() * fallback.length)];
+        }
+    }
+
+    private String[] STAGES = {
+        // 0 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "      |\n" +
+        "      |\n" +
+        "      |\n" +
+        "      |\n" +
+        "=========",
+        // 1 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        "      |\n" +
+        "      |\n" +
+        "      |\n" +
+        "=========",
+        // 2 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        "  |   |\n" +
+        "      |\n" +
+        "      |\n" +
+        "=========",
+        // 3 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        " /|   |\n" +
+        "      |\n" +
+        "      |\n" +
+        "=========",
+        // 4 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        " /|\\  |\n" +
+        "      |\n" +
+        "      |\n" +
+        "=========",
+        // 5 wrong
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        " /|\\  |\n" +
+        " /    |\n" +
+        "      |\n" +
+        "=========",
+        // 6 wrong - dead
+        "  +---+\n" +
+        "  |   |\n" +
+        "  O   |\n" +
+        " /|\\  |\n" +
+        " / \\  |\n" +
+        "      |\n" +
+        "========="
+    };
 
     @Override
     public void add(PlayerInterface player) {
-        this.player = (HangmanPlayer)player;
+        this.player = (HangmanPlayer) player;
     }
 
     @Override
@@ -24,13 +92,14 @@ public class HangmanGame implements GameInterface {
 
     @Override
     public void run() {
-        secretWord = words[(int)(Math.random() * words.length)];
+        secretWord = getRandomWord();
         guessedLetters.clear();
         maxIncorrectGuesses = 6;
 
         System.out.println("Welcome to Hangman, " + player.getName() + "!");
 
         while (maxIncorrectGuesses > 0 && !isWon()) {
+            System.out.println(STAGES[6 - maxIncorrectGuesses]);
             displayWord();
             System.out.println("Remaining attempts: " + maxIncorrectGuesses);
             System.out.println("Guessed letters: " + guessedLetters);
@@ -43,6 +112,8 @@ public class HangmanGame implements GameInterface {
                 System.out.println("Wrong! -1 attempt");
             }
         }
+
+        System.out.println(STAGES[6 - maxIncorrectGuesses]);
 
         if (isWon()) {
             System.out.println("You win! The word was: " + secretWord);
