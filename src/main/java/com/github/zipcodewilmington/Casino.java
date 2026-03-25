@@ -4,6 +4,10 @@ import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.CasinoAccountManager;
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.casino.games.blackjack.BlackjackGame;
+import com.github.zipcodewilmington.casino.games.blackjack.BlackjackPlayer;
+import com.github.zipcodewilmington.casino.games.craps.CrapsGame;
+import com.github.zipcodewilmington.casino.games.craps.CrapsPlayer;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessGame;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessPlayer;
 import com.github.zipcodewilmington.casino.games.slots.SlotsGame;
@@ -34,8 +38,17 @@ public class Casino implements Runnable {
                         play(new SlotsGame(), new SlotsPlayer());
                     } else if (gameSelectionInput.equals("NUMBERGUESS")) {
                         play(new NumberGuessGame(), new NumberGuessPlayer());
+                    } else if (gameSelectionInput.equals("BLACKJACK")) {
+                        play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
+                    } else if (gameSelectionInput.equals("CRAPS")) {
+                        play(new CrapsGame(), new CrapsPlayer(casinoAccount));
+                    // ── Teammates: uncomment your game below when ready ──────────
+                    // } else if (gameSelectionInput.equals("ROULETTE")) {
+                    //     play(new RouletteGame(), new RoulettePlayer(casinoAccount));
+                    // } else if (gameSelectionInput.equals("HANGMAN")) {
+                    //     play(new HangmanGame(), new HangmanPlayer(casinoAccount));
+                    // ─────────────────────────────────────────────────────────────
                     } else {
-                        // TODO - implement better exception handling
                         String errorMessage = "[ %s ] is an invalid game selection";
                         throw new RuntimeException(String.format(errorMessage, gameSelectionInput));
                     }
@@ -66,13 +79,11 @@ public class Casino implements Runnable {
         return console.getStringInput(new StringBuilder()
                 .append("Welcome to the Game Selection Dashboard!")
                 .append("\nFrom here, you can select any of the following options:")
-                .append("\n\t[ SLOTS ], [ NUMBERGUESS ]")
+            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ]")
                 .toString());
     }
 
-    private void play(Object gameObject, Object playerObject) {
-        GameInterface game = (GameInterface)gameObject;
-        PlayerInterface player = (PlayerInterface)playerObject;
+    private void play(GameInterface game, PlayerInterface player) {
         game.add(player);
         game.run();
     }
