@@ -1,6 +1,10 @@
 package com.github.zipcodewilmington.casino.games.craps;
 
+import java.util.Random;
+
 public class Dice {
+
+    private static final Random random = new Random();
 
     private int die1;
     private int die2;
@@ -13,12 +17,12 @@ public class Dice {
     }
 
     public void roll() {
-        // TODO: roll both dice using random values between 1 and sides
+        die1 = random.nextInt(sides) + 1;
+        die2 = random.nextInt(sides) + 1;
     }
 
     public int getTotal() {
-        // TODO: return the sum of die1 + die2
-        return 0;
+        return die1 + die2;
     }
 
     public int getSides() {
@@ -35,7 +39,6 @@ public class Dice {
 
     @Override
     public String toString() {
-        // TODO: return a readable string e.g. "[3] + [4] = 7"
-        return "";
+        return "[" + die1 + "] + [" + die2 + "] = " + getTotal();
     }
 }

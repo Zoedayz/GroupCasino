@@ -21,12 +21,27 @@ public class RouletteGame implements GameInterface {
         this.scanner = new Scanner(System.in);
     }
 
+    // ── GameInterface bridge methods ──────────────────────────────────────
     @Override
+    public void add(PlayerInterface player) {
+        this.player = (RoulettePlayer) player;
+    }
+
+    @Override
+    public void remove(PlayerInterface player) {
+        removePlayer(player);
+    }
+
+    @Override
+    public void run() {
+        play();
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     public void addPlayer(CasinoAccount account) {
         this.player = new RoulettePlayer(account);
     }
 
-    @Override
     public void play() {
         System.out.println("\n==== ROULETTE ====");
         System.out.println("Balance: $" + player.getAccount().getBalance());
@@ -96,10 +111,10 @@ public class RouletteGame implements GameInterface {
 
         if (isWin(result, betType, betNumber)) {
             double winnings = calculateWinnings(betAmount, betType);
-            player.getAccount().deposit(winnings);
+            player.getAccount().depositToBalance(winnings);
             System.out.println("YOU WIN! + $" + winnings);
         } else {
-            player.getAccount().withdraw(betAmount);
+            player.getAccount().withdrawBalance(betAmount);
             System.out.println("You lost. - $" + betAmount);
         }
 
@@ -136,9 +151,10 @@ public class RouletteGame implements GameInterface {
         return false;
     }
 
-    @Override
     public void removePlayer(PlayerInterface player) {
+        if (scanner != null) {
+            scanner.close();
+        }
         this.player = null;
     }
 }
-//review 
