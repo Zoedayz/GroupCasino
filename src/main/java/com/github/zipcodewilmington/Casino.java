@@ -10,6 +10,8 @@ import com.github.zipcodewilmington.casino.games.craps.CrapsGame;
 import com.github.zipcodewilmington.casino.games.craps.CrapsPlayer;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessGame;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessPlayer;
+import com.github.zipcodewilmington.casino.games.hangman.HangmanGame;
+import com.github.zipcodewilmington.casino.games.hangman.HangmanPlayer;
 import com.github.zipcodewilmington.casino.games.roulette.RouletteGame;
 import com.github.zipcodewilmington.casino.games.roulette.RoulettePlayer;
 import com.github.zipcodewilmington.casino.games.slots.SlotsGame;
@@ -46,10 +48,8 @@ public class Casino implements Runnable {
                         play(new CrapsGame(), new CrapsPlayer(casinoAccount));
                     } else if (gameSelectionInput.equals("ROULETTE")) {
                         play(new RouletteGame(), new RoulettePlayer(casinoAccount));
-                    // ── Teammates: uncomment your game below when ready ──────────
-                    // } else if (gameSelectionInput.equals("HANGMAN")) {
-                    //     play(new HangmanGame(), new HangmanPlayer(casinoAccount));
-                    // ─────────────────────────────────────────────────────────────
+                    } else if (gameSelectionInput.equals("HANGMAN")) {
+                        play(new HangmanGame(), new HangmanPlayer(casinoAccount.getUsername(), casinoAccount));
                     } else {
                         String errorMessage = "[ %s ] is an invalid game selection";
                         throw new RuntimeException(String.format(errorMessage, gameSelectionInput));
@@ -81,7 +81,7 @@ public class Casino implements Runnable {
         return console.getStringInput(new StringBuilder()
                 .append("Welcome to the Game Selection Dashboard!")
                 .append("\nFrom here, you can select any of the following options:")
-            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ]")
+            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
                 .toString());
     }
 
