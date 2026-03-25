@@ -1,7 +1,9 @@
 package com.github.zipcodewilmington.casino.games.roulette;
-import com.github.zipcodewilmington.casino.CasinoAccount;
 
-public class RoulettePlayer {
+import com.github.zipcodewilmington.casino.CasinoAccount;
+import com.github.zipcodewilmington.casino.PlayerInterface;
+
+public class RoulettePlayer implements PlayerInterface {
     private CasinoAccount account;
     private int betNumber;
     private String betType;
@@ -13,6 +15,16 @@ public class RoulettePlayer {
 
     public CasinoAccount getAccount() {
         return account;
+    }
+
+    @Override
+    public CasinoAccount getArcadeAccount() {
+        return account;
+    }
+
+    @Override
+    public <SomeReturnType> SomeReturnType play() {
+        return null; // turn logic handled in RouletteGame
     }
 
     public int getBetNumber() {

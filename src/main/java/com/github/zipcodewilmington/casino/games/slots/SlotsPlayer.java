@@ -26,7 +26,14 @@ public class SlotsPlayer implements PlayerInterface {
 
     public String getName() { return name; }
 
-    public double getBalance() { return account.getActiveBalance(); }
+    public double getBalance() { return account.getBalance(); }
 
-    public void setBalance(double amount) { account.setActiveBalance(amount); }
+    public void setBalance(double newBalance) {
+        double current = account.getBalance();
+        if (newBalance > current) {
+            account.depositToBalance(newBalance - current);
+        } else if (newBalance < current) {
+            account.withdrawBalance(current - newBalance);
+        }
+    }
 }
