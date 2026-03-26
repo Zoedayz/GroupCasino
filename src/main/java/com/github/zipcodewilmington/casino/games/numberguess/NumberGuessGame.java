@@ -1,106 +1,69 @@
 package com.github.zipcodewilmington.casino.games.numberguess;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
-
+import com.github.zipcodewilmington.utils.AnsiColor;
+import com.github.zipcodewilmington.utils.IOConsole;
 
 public class NumberGuessGame implements GameInterface {
-
-    private final NumberGuessPlayer player;
     private final Random random;
-    private final Scanner scanner;
-    
-    private int number;
-    private int guesses;
-    private int guess;
-    private boolean playAgain;
-    
+    private List<PlayerInterface> players;
+    private final IOConsole console = new IOConsole(AnsiColor.BLUE);
 
-    public NumberGuessGame(NumberGuessPlayer player, Random random, Scanner scanner) {
-        this.player = player;
-        this.random = random;
-        this.scanner = scanner;
+    public NumberGuessGame() {
+        this.random = new Random();
+        this.players = new ArrayList<>();
     }
-
-    public void play() {
-        System.out.println("Welcome to Number Guess Game!===");
-        
-        boolean playAgain = true;
-
-        while (playAgain) {
-            playRound();
-        } 
-
-        System.out.print("Do you want to play again? (yes/no): ");
-        String response = scanner.next();
-        playAgain = response.equalsIgnoreCase("yes");
-      
-        
-        System.out.println("Thanks for playing Number Guess Game!"); 
-        }
-    
-        private void playRound() {
-            number = random.nextInt(100) + 1; // Random number between 1 and 100
-            guesses = 0;    
-        
-        while (true) {
-            // Prompt the user for a guess
-            System.out.print("Enter a guess between 1 and 100: ");
-            int guess = scanner.nextInt();
-
-            // Count this guess
-            guesses ++;
-
-            // Check if the guess is correct
-            if (guess == number) {
-                System.out.println("CONGRATULATIONS YOU WIN! You guessed it in " + guesses + " guesses.");
-                break;
-            }
-            // Too low
-            else if (guess < number) {
-                System.out.println("Too Low!");
-            }
-            // Too high
-            else if (guess > number) {
-                System.out.println("Too High!");
-            }
-
-            // Check if the player has used all 10 guesses
-            if (guesses >= 10) {
-                System.out.println("You have run out of guesses! The number was " + number + ".");
-                break;
-            }
-        
-        }
-        scanner.close();
-    }
-
 
     @Override
     public void add(PlayerInterface player) {
-        // TODO: store the player
+        players.add(player);
     }
 
     @Override
     public void remove(PlayerInterface player) {
-        // TODO: remove the player
+        players.remove(player);
     }
 
     @Override
     public void run() {
-    if (guess == number) {
-        System.out.println("CONGRATULATIONS YOU WIN! You guessed it in " + guesses + " guesses.");
+        console.println("=== Welcome to Number Guess Game ===");
+
+        String playAgain = "y";
+        while (playAgain.equalsIgnoreCase("y")) {
+            playRound();
+            playAgain = console.getStringInput("\nPlay another round? (y/n): ");
+        }
+
+        console.println("Thanks for playing!");
     }
-            // Too low
-    else if (guess < number) {
-        System.out.println("Too Low!");
-    }
-            // Too high
-    else if (guess > number) {
-        System.out.println("Too High!");
-    }   // TODO: implement the number guessing game loop
+
+    private void playRound() {
+        int number = random.nextInt(100) + 1;
+        int guesses = 0;
+
+        console.println("\nI've picked a number between 1 and 100. You have 10 guesses.");
+
+        while (guesses < 10) {
+            int guess = console.getIntInput("Enter your guess: ");
+            guesses++;
+
+            if (guess == number) {
+                console.println("CONGRATULATIONS YOU WIN! You guessed it in %d guesses.", guesses);
+                return;
+            } else if (guess < number) {
+                console.println("Too Low!");
+            } else {
+                console.println("Too High!");
+            }
+
+            console.println("Guesses remaining: %d", 10 - guesses);
+        }
+
+        console.println("You have run out of guesses! The number was %d.", number);
     }
 }

@@ -68,4 +68,9 @@ public class IOConsole {
     public Integer getIntegerInput(String prompt, Object... args) {
         return getLongInput(prompt, args).intValue();
     }
+
+    public int getIntInput(String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getIntInput'");
+    }
 }
