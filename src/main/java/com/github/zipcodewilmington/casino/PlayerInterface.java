@@ -1,21 +1,36 @@
 package com.github.zipcodewilmington.casino;
 
 /**
- * Created by leon on 7/21/2020.
- * All players of a game should abide by `PlayerInterface`.
- * All players must have reference to the `ArcadeAccount` used to log into the `Arcade` system.
- * All players are capable of `play`ing a game.
+ * Contract for all players in the Casino.
+ * All players must hold a CasinoAccount reference and know how to play their game.
+ * Methods marked `default` are provided for free — override them if you need custom behaviour.
  */
 public interface PlayerInterface {
-    /**
-     * @return the `ArcadeAccount` used to log into the `Arcade` system to play this game
-     */
+
+    // ── Required (must implement) ─────────────────────────────────────
+
+    /** @return the CasinoAccount used to log into the Casino system. */
     CasinoAccount getArcadeAccount();
 
     /**
-     * Defines how a specific implementation of `PlayerInterface` plays their respective game.
-     * @param <SomeReturnType> specify any return type you would like here
-     * @return whatever return value you would like
+     * Defines how this player plays their game.
+     * @param <SomeReturnType> any return type you need
      */
     <SomeReturnType> SomeReturnType play();
+
+    // ── Provided for free (override if needed) ────────────────────────
+
+    /**
+     * Alias for getArcadeAccount() — matches the UML name.
+     * Override if your player stores the account under a different field.
+     */
+    default CasinoAccount fetchCasinoAccount() {
+        return getArcadeAccount();
+    }
+
+    /** @return the player's current balance, or 0.0 if no account is set. */
+    default double getBalance() {
+        CasinoAccount account = getArcadeAccount();
+        return account != null ? account.getBalance() : 0.0;
+    }
 }
