@@ -38,7 +38,7 @@ public class Casino implements Runnable {
                 boolean isValidLogin = casinoAccount != null;
                 if (isValidLogin) {
                     String gameSelectionInput = getGameSelectionInput().toUpperCase();
-                    if (gameSelectionInput.equals("SLOTS")) {
+                    if (gameSelectionInput.equals("1")) {
                         play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
                     } else if (gameSelectionInput.equals("NUMBERGUESS")) {
                         play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
@@ -77,7 +77,7 @@ public class Casino implements Runnable {
                     throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
                 }
             }
-        } while (!"logout".equals(arcadeDashBoardInput));
+        } while (!"4".equals(arcadeDashBoardInput));
     }
 
     private String getArcadeDashboardInput() {
