@@ -89,12 +89,17 @@ public class CrapsGame implements GameInterface {
             }
         }
     }
-
     public void rollDice() {
-        dice.roll();
-        console.println("Rolled: " + dice.toString());
-    }
+    int die1 = (int)(Math.random() * 6) + 1;
+    int die2 = (int)(Math.random() * 6) + 1;
+    
+    // Calculate Unicode start point (2680 is '1')
+    char face1 = (char)('\u2680' + (die1 - 1));
+    char face2 = (char)('\u2680' + (die2 - 1));
 
+    System.out.println("The dice roll: " + face1 + " " + face2);
+    System.out.println("Total: " + (die1 + die2));
+}
     /**
      * Evaluates the dice roll against craps rules.
      * @param total  the dice total
