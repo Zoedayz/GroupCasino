@@ -10,11 +10,11 @@ public class RouletteGame implements GameInterface {
 
     private RoulettePlayer player;
     private final Scanner scanner;
-    private final RouletteWheel wheel; // Your Wheel class integrated here
+    private final RouletteWheel wheel; 
 
     public RouletteGame() {
         this.scanner = new Scanner(System.in);
-        this.wheel = new RouletteWheel(); // Initialize the wheel
+        this.wheel = new RouletteWheel(); // Initialize 
     }
 
     // ── GameInterface bridge methods ──────────────────────────────────────

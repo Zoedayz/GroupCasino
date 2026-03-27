@@ -31,7 +31,7 @@ public class Casino implements Runnable {
         CasinoAccountManager casinoAccountManager = new CasinoAccountManager();
         do {
             arcadeDashBoardInput = getArcadeDashboardInput();
-            if ("select-game".equals(arcadeDashBoardInput)) {
+            if ("1".equals(arcadeDashBoardInput)) {
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
@@ -59,14 +59,14 @@ public class Casino implements Runnable {
                     String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
                     throw new RuntimeException(String.format(errorMessage, accountPassword, accountName));
                 }
-            } else if ("create-account".equals(arcadeDashBoardInput)) {
+            } else if ("2".equals(arcadeDashBoardInput)) {
                 console.println("Welcome to the account-creation screen.");
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount newAccount = casinoAccountManager.createAccount(accountName, accountPassword);
                 casinoAccountManager.registerAccount(newAccount);
                 console.println("Account created! You have been given $500.00 to start.");
-            } else if ("manage-account".equals(arcadeDashBoardInput)) {
+            } else if ("3".equals(arcadeDashBoardInput)) {
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
@@ -82,17 +82,31 @@ public class Casino implements Runnable {
 
     private String getArcadeDashboardInput() {
         return console.getStringInput(new StringBuilder()
-                .append("Welcome to the Arcade Dashboard!")
-                .append("\nFrom here, you can select any of the following options:")
-                .append("\n\t[ create-account ], [ select-game ], [ manage-account ], [ logout ]")
-                .toString());
+                .append("\n ╔══════════════════════════════╗")
+                .append("\n║     🎰 WELCOME TO CASINO 🎰   ║")
+        .append("\n╠══════════════════════════════╣")
+        .append("\n║  1. Create Account           ║")
+        .append("\n║  2. Select Game              ║")
+        .append("\n║  3. Manage Account           ║")
+        .append("\n║  4. Logout                   ║")
+        .append("\n╚══════════════════════════════╝")
+        .append("\nEnter a number (1-4): ")
+        .toString());
     }
 
     private String getGameSelectionInput() {
         return console.getStringInput(new StringBuilder()
-                .append("Welcome to the Game Selection Dashboard!")
-                .append("\nFrom here, you can select any of the following options:")
-            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
+                .append("\n ╔══════════════════════════════╗")
+                .append("\n║  GAME SELECTION DASHBOARD    ║")
+                .append("\n╠══════════════════════════════╣")
+                .append("\n║  1. SLOTS                    ║")
+                .append("\n║  2. NUMBER GUESS             ║")
+                .append("\n║  3. BLACKJACK                ║")
+                .append("\n║  4. CRAPS                    ║")
+                .append("\n║  5. ROULETTE                 ║")
+                .append("\n║  6. HANGMAN                  ║")
+                .append("\n╚══════════════════════════════╝")
+                .append("\nEnter a number (1-6): ")
                 .toString());
     }
 
