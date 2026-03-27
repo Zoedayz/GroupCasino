@@ -88,18 +88,49 @@ public class CrapsGame implements GameInterface {
                 }
             }
         }
-    }
-    public void rollDice() {
-    int die1 = (int)(Math.random() * 6) + 1;
-    int die2 = (int)(Math.random() * 6) + 1;
-    
-    // Calculate Unicode start point (2680 is '1')
-    char face1 = (char)('\u2680' + (die1 - 1));
-    char face2 = (char)('\u2680' + (die2 - 1));
-
-    System.out.println("The dice roll: " + face1 + " " + face2);
-    System.out.println("Total: " + (die1 + die2));
 }
+
+/**
+ * Rolls two dice, displays their Unicode icons, and updates the dice object.
+ */
+public void rollDice() {
+        // Roll the internal dice object (assuming it has a roll method)
+        this.dice.roll(); 
+        
+        // Get the individual values from your dice object
+        // If your Dice class doesn't have these, use: (int)(Math.random() * 6) + 1
+        int die1 = dice.getDie1(); 
+        int die2 = dice.getDie2();
+        
+        String icon1 = getDiceUnicode(die1);
+        String icon2 = getDiceUnicode(die2);
+
+        console.println("\n[ The dice roll: %s  %s ]", icon1, icon2);
+        console.println("Total: %d", (die1 + die2));
+    }
+
+    /**
+     * Helper to return the Unicode character for a dice face.
+     */
+    private String getDiceUnicode(int value) {
+        switch (value) {
+            case 1:
+                return "\u2680"; // ⚀
+            case 2:
+                return "\u2681"; // ⚁
+            case 3:
+                return "\u2682"; // ⚂
+            case 4:
+                return "\u2683"; // ⚃
+            case 5:
+                return "\u2684"; // ⚄
+            case 6:
+                return "\u2685"; // ⚅
+            default:
+                return "?";
+        }
+    }
+
     /**
      * Evaluates the dice roll against craps rules.
      * @param total  the dice total
