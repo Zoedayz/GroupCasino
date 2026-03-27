@@ -1,19 +1,22 @@
 package com.github.zipcodewilmington.casino.games.slots;
+
 import java.util.Random;
-import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.utils.AnsiColor;
+import com.github.zipcodewilmington.utils.IOConsole;
 
+public class SlotsGame implements GameInterface {
 
-public class SlotsGame implements GameInterface{
     private SlotsPlayer player;
-    private Random random = new Random();
-    private String[] symbols = {"🍒", "🍋", "⭐", "🔔", "💎"};
+    private final Random random = new Random();
+    private final IOConsole console = new IOConsole(AnsiColor.PURPLE);
+    private final String[] symbols = {"🍒", "🍋", "⭐", "🔔", "💎"};
 
     @Override
     public void add(PlayerInterface player) {
-        this.player = (SlotsPlayer)player;
+        this.player = (SlotsPlayer) player;
     }
 
     @Override
@@ -21,45 +24,56 @@ public class SlotsGame implements GameInterface{
         this.player = null;
     }
 
-
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to Slots, " + player.getName() + "!");
+        console.println("Welcome to Slots, " + player.getName() + "!");
 
-        while (player.getBalance() > 0 ) {
-            System.out.println("Balance: $" + player.getBalance());
-            System.out.print("Enter bet amount (or 0 to quit): ");
-            double bet = scanner.nextDouble();
+        while (player.getBalance() > 0) {
+            console.println("Balance: $%.2f", player.getBalance());
+            double bet = console.getDoubleInput("Enter bet amount (or 0 to quit): ");
+
             if (bet == 0) {
                 break;
             }
             if (bet > player.getBalance()) {
-                System.out.println("Insufficient balance!");
+                console.println("Insufficient balance!");
                 continue;
             }
 
-            String result = spin();
-            System.out.println("Spinning...");
+            // Spin and reveal reels one at a time
+            String[] reels = spin();
+            console.println("Spinning...");
 
-            String[] reels = result.split(" \\| ");
+            try {
+                Thread.sleep(600);
+                console.println("  [ " + reels[0] + " ] | [ ? ] | [ ? ]");
+                Thread.sleep(600);
+                console.println("  [ " + reels[0] + " ] | [ " + reels[1] + " ] | [ ? ]");
+                Thread.sleep(600);
+                console.println("  [ " + reels[0] + " ] | [ " + reels[1] + " ] | [ " + reels[2] + " ]");
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
             if (reels[0].equals(reels[1]) && reels[1].equals(reels[2])) {
                 double winnings = bet * 3;
                 player.setBalance(player.getBalance() + winnings);
-                System.out.println("Jackpot! You win $" + winnings);
+                console.println("Jackpot! You win $%.2f", winnings);
             } else {
                 player.setBalance(player.getBalance() - bet);
-                System.out.println("You lose $" + bet);
+                console.println("You lose $%.2f", bet);
             }
         }
-        System.out.println("Game over! Final balance: $" + player.getBalance());
-        }
-        
-            public String spin() {
-        String reel1 = symbols[random.nextInt(symbols.length)];
-        String reel2 = symbols[random.nextInt(symbols.length)];
-        String reel3 = symbols[random.nextInt(symbols.length)];
-        return reel1 + " | " + reel2 + " | " + reel3;
+
+        console.println("Game over! Final balance: $%.2f", player.getBalance());
     }
-    
+
+    public String[] spin() {
+        return new String[]{
+            symbols[random.nextInt(symbols.length)],
+            symbols[random.nextInt(symbols.length)],
+            symbols[random.nextInt(symbols.length)]
+        };
+    }
 }
