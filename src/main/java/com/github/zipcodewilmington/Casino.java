@@ -37,29 +37,55 @@ public class Casino implements Runnable {
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
                 boolean isValidLogin = casinoAccount != null;
                 if (isValidLogin) {
-                    console.println("\nWelcome back, %s! | Balance: $%.2f",
-                        casinoAccount.getUsername(), casinoAccount.getBalance());
-                    String gameSelectionInput = getGameSelectionInput(casinoAccount).toUpperCase();
-                    if (gameSelectionInput.equals("SLOTS")) {
-                        play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
-                    } else if (gameSelectionInput.equals("NUMBERGUESS")) {
-                        play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
-                    } else if (gameSelectionInput.equals("BLACKJACK")) {
-                        play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
-                    } else if (gameSelectionInput.equals("CRAPS")) {
-                        play(new CrapsGame(), new CrapsPlayer(casinoAccount));
-                    } else if (gameSelectionInput.equals("ROULETTE")) {
-                        play(new RouletteGame(), new RoulettePlayer(casinoAccount));
-                    } else if (gameSelectionInput.equals("HANGMAN")) {
-                        play(new HangmanGame(), new HangmanPlayer(casinoAccount.getUsername(), casinoAccount));
-                    } else {
-                        String errorMessage = "[ %s ] is an invalid game selection";
-                        throw new RuntimeException(String.format(errorMessage, gameSelectionInput));
+                    String gameSelectionInput;
+                    do {
+                        gameSelectionInput = getGameSelectionInput().toUpperCase();
+                        if (gameSelectionInput.equals("SLOTS")) {
+                            play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
+                        } else if (gameSelectionInput.equals("NUMBERGUESS")) {
+                            play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
+                        } else if (gameSelectionInput.equals("BLACKJACK")) {
+                            play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
+                        } else if (gameSelectionInput.equals("CRAPS")) {
+                            play(new CrapsGame(), new CrapsPlayer(casinoAccount));
+                        } else if (gameSelectionInput.equals("ROULETTE")) {
+                            play(new RouletteGame(), new RoulettePlayer(casinoAccount));
+                        } else if (gameSelectionInput.equals("HANGMAN")) {
+                            play(new HangmanGame(), new HangmanPlayer(casinoAccount.getUsername(), casinoAccount));
+                        } else if (!gameSelectionInput.equals("BACK")) {
+                            console.println("[ %s ] is an invalid game selection", gameSelectionInput);
+                        }
+                    } while (!gameSelectionInput.equals("BACK") && casinoAccount.getBalance() > 0);
+
+                    if (casinoAccount.getBalance() <= 0) {
+                        console.println(
+                "\n" +
+    "  _____  _____  _____  _   _ \n" +
+    " |_   _||_   _||  ___|| \\ | |\n" +
+    "   | |    | |  | |_   |  \\| |\n" +
+    "   | |    | |  |  _|  | |\\ |\n" +
+    "   |_|    |_|  |_|    |_| \\_|\n" +
+    "\n" +
+    "  __  __  ___  _   _     _   ____  _____ \n" +
+    "  \\ \\/ / / _ \\| | | |   / \\ |  _ \\| ____|\n" +
+    "   \\  / | | | | | | |  / _ \\| |_) |  _|  \n" +
+    "   / /  | |_| | |_| | / ___ \\|  _ <| |___\n" +
+    "  /_/    \\___/ \\___/ /_/   \\_\\_| \\_\\_____|\n" +
+    "\n" +
+    "  ____  ____  ___  _  __ _____\n" +
+    " | __ )|  _ \\/ _ \\| |/ /| ____|\n" +
+    " |  _ \\| |_) | | | | ' /|  _|  \n" +
+    " | |_) |  _ <| |_| | . \\| |___\n" +
+    " |____/|_| \\_\\\\___/|_|\\_\\|_____|\n" +
+    "\n" +
+    "  +------------------------------------------+\n" +
+    "  |  Ta Ta For Now... and your money too!    |\n" +
+    "  |     The house ALWAYS wins! >:)           |\n" +
+    "  +------------------------------------------+\n"
+            );
                     }
                 } else {
-                    // TODO - implement better exception handling
-                    String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
-                    throw new RuntimeException(String.format(errorMessage, accountPassword, accountName));
+                    console.println("No account found with name of [ %s ] and password of [ %s ]", accountName, accountPassword);
                 }
             } else if ("create-account".equals(arcadeDashBoardInput)) {
                 console.println("Welcome to the account-creation screen.");
@@ -76,7 +102,7 @@ public class Casino implements Runnable {
                     manageAccount(casinoAccount);
                 } else {
                     String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
-                    throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
+                    console.println(String.format(errorMessage, accountName, accountPassword));
                 }
             }
         } while (!"logout".equals(arcadeDashBoardInput));
@@ -90,12 +116,11 @@ public class Casino implements Runnable {
                 .toString());
     }
 
-    private String getGameSelectionInput(CasinoAccount account) {
+    private String getGameSelectionInput() {
         return console.getStringInput(new StringBuilder()
                 .append("Welcome to the Game Selection Dashboard!")
-                .append(String.format("\n  Balance: $%.2f", account.getBalance()))
                 .append("\nFrom here, you can select any of the following options:")
-                .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
+            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ], [ BACK ]")
                 .toString());
     }
 
@@ -103,8 +128,7 @@ public class Casino implements Runnable {
         String input;
         do {
             input = console.getStringInput(new StringBuilder()
-                    .append(String.format("\n=== Account: %s | Balance: $%.2f ===",
-                        account.getUsername(), account.getBalance()))
+                    .append("\n=== Account: " + account.getUsername() + " ===")
                     .append("\n\t[ view ], [ deposit ], [ withdraw ], [ back ]")
                     .toString());
 
@@ -124,7 +148,5 @@ public class Casino implements Runnable {
     private void play(GameInterface game, PlayerInterface player) {
         game.add(player);
         game.run();
-        console.println("\nGame over! Your balance: $%.2f",
-            player.getArcadeAccount().getBalance());
     }
 }
