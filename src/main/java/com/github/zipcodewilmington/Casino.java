@@ -37,7 +37,9 @@ public class Casino implements Runnable {
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
                 boolean isValidLogin = casinoAccount != null;
                 if (isValidLogin) {
-                    String gameSelectionInput = getGameSelectionInput().toUpperCase();
+                    console.println("\nWelcome back, %s! | Balance: $%.2f",
+                        casinoAccount.getUsername(), casinoAccount.getBalance());
+                    String gameSelectionInput = getGameSelectionInput(casinoAccount).toUpperCase();
                     if (gameSelectionInput.equals("SLOTS")) {
                         play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
                     } else if (gameSelectionInput.equals("NUMBERGUESS")) {
@@ -88,11 +90,12 @@ public class Casino implements Runnable {
                 .toString());
     }
 
-    private String getGameSelectionInput() {
+    private String getGameSelectionInput(CasinoAccount account) {
         return console.getStringInput(new StringBuilder()
                 .append("Welcome to the Game Selection Dashboard!")
+                .append(String.format("\n  Balance: $%.2f", account.getBalance()))
                 .append("\nFrom here, you can select any of the following options:")
-            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
+                .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
                 .toString());
     }
 
@@ -100,7 +103,8 @@ public class Casino implements Runnable {
         String input;
         do {
             input = console.getStringInput(new StringBuilder()
-                    .append("\n=== Account: " + account.getUsername() + " ===")
+                    .append(String.format("\n=== Account: %s | Balance: $%.2f ===",
+                        account.getUsername(), account.getBalance()))
                     .append("\n\t[ view ], [ deposit ], [ withdraw ], [ back ]")
                     .toString());
 
@@ -120,5 +124,7 @@ public class Casino implements Runnable {
     private void play(GameInterface game, PlayerInterface player) {
         game.add(player);
         game.run();
+        console.println("\nGame over! Your balance: $%.2f",
+            player.getArcadeAccount().getBalance());
     }
 }
