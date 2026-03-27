@@ -8,10 +8,10 @@ import com.github.zipcodewilmington.casino.games.blackjack.BlackjackGame;
 import com.github.zipcodewilmington.casino.games.blackjack.BlackjackPlayer;
 import com.github.zipcodewilmington.casino.games.craps.CrapsGame;
 import com.github.zipcodewilmington.casino.games.craps.CrapsPlayer;
-import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessGame;
-import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessPlayer;
 import com.github.zipcodewilmington.casino.games.hangman.HangmanGame;
 import com.github.zipcodewilmington.casino.games.hangman.HangmanPlayer;
+import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessGame;
+import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessPlayer;
 import com.github.zipcodewilmington.casino.games.roulette.RouletteGame;
 import com.github.zipcodewilmington.casino.games.roulette.RoulettePlayer;
 import com.github.zipcodewilmington.casino.games.slots.SlotsGame;
@@ -41,7 +41,7 @@ public class Casino implements Runnable {
                     if (gameSelectionInput.equals("SLOTS")) {
                         play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
                     } else if (gameSelectionInput.equals("NUMBERGUESS")) {
-                        play(new NumberGuessGame(null, null, null), new NumberGuessPlayer(casinoAccount));
+                        play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
                     } else if (gameSelectionInput.equals("BLACKJACK")) {
                         play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
                     } else if (gameSelectionInput.equals("CRAPS")) {
@@ -65,6 +65,17 @@ public class Casino implements Runnable {
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount newAccount = casinoAccountManager.createAccount(accountName, accountPassword);
                 casinoAccountManager.registerAccount(newAccount);
+                console.println("Account created! You have been given $500.00 to start.");
+            } else if ("manage-account".equals(arcadeDashBoardInput)) {
+                String accountName = console.getStringInput("Enter your account name:");
+                String accountPassword = console.getStringInput("Enter your account password:");
+                CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
+                if (casinoAccount != null) {
+                    manageAccount(casinoAccount);
+                } else {
+                    String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
+                    throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
+                }
             }
         } while (!"logout".equals(arcadeDashBoardInput));
     }
@@ -73,7 +84,7 @@ public class Casino implements Runnable {
         return console.getStringInput(new StringBuilder()
                 .append("Welcome to the Arcade Dashboard!")
                 .append("\nFrom here, you can select any of the following options:")
-                .append("\n\t[ create-account ], [ select-game ]")
+                .append("\n\t[ create-account ], [ select-game ], [ manage-account ], [ logout ]")
                 .toString());
     }
 
@@ -83,6 +94,27 @@ public class Casino implements Runnable {
                 .append("\nFrom here, you can select any of the following options:")
             .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ]")
                 .toString());
+    }
+
+    private void manageAccount(CasinoAccount account) {
+        String input;
+        do {
+            input = console.getStringInput(new StringBuilder()
+                    .append("\n=== Account: " + account.getUsername() + " ===")
+                    .append("\n\t[ view ], [ deposit ], [ withdraw ], [ back ]")
+                    .toString());
+
+            if ("view".equals(input)) {
+                console.println("Username: %s", account.getUsername());
+                account.displayBalance();
+            } else if ("deposit".equals(input)) {
+                double amount = console.getDoubleInput("Enter deposit amount: $");
+                account.depositToBalance(amount);
+            } else if ("withdraw".equals(input)) {
+                double amount = console.getDoubleInput("Enter withdrawal amount: $");
+                account.withdrawBalance(amount);
+            }
+        } while (!"back".equals(input));
     }
 
     private void play(GameInterface game, PlayerInterface player) {

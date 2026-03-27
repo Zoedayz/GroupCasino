@@ -4,12 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.utils.AnsiColor;
+import com.github.zipcodewilmington.utils.IOConsole;
 
 public class HangmanGame implements GameInterface {
     private HangmanPlayer player;
     private String secretWord;
     private Set<Character> guessedLetters = new HashSet<>();
     private int maxIncorrectGuesses = 6;
+    private final IOConsole console = new IOConsole(AnsiColor.GREEN);
     private String getRandomWord() {
         try {
             java.net.URL url = new java.net.URL("https://random-word-api.herokuapp.com/word?number=1");
@@ -92,43 +95,51 @@ public class HangmanGame implements GameInterface {
 
     @Override
     public void run() {
-        secretWord = getRandomWord();
+        secretWord = pickWord();
         guessedLetters.clear();
         maxIncorrectGuesses = 6;
 
-        System.out.println("Welcome to Hangman, " + player.getName() + "!");
+        console.println("Welcome to Hangman, " + player.getName() + "!");
 
-        while (maxIncorrectGuesses > 0 && !isWon()) {
-            System.out.println(STAGES[6 - maxIncorrectGuesses]);
+        while (!isGameOver()) {
+            console.println(STAGES[6 - maxIncorrectGuesses]);
             displayWord();
-            System.out.println("Remaining attempts: " + maxIncorrectGuesses);
-            System.out.println("Guessed letters: " + guessedLetters);
+            console.println("Remaining attempts: " + maxIncorrectGuesses);
+            console.println("Guessed letters: " + guessedLetters);
 
             char guess = player.guessLetter();
 
-            if (guessLetter(guess)) {
-                System.out.println("Good guess!");
+            if (checkGuess(guess)) {
+                console.println("Good guess!");
             } else {
-                System.out.println("Wrong! -1 attempt");
+                console.println("Wrong! -1 attempt");
             }
         }
 
-        System.out.println(STAGES[6 - maxIncorrectGuesses]);
+        console.println(STAGES[6 - maxIncorrectGuesses]);
 
         if (isWon()) {
-            System.out.println("You win! The word was: " + secretWord);
+            console.println("You win! The word was: " + secretWord);
         } else {
-            System.out.println("Game over! The word was: " + secretWord);
+            console.println("Game over! The word was: " + secretWord);
         }
     }
 
-    public boolean guessLetter(char c) {
+    private String pickWord() {
+        return getRandomWord();
+    }
+
+    public boolean checkGuess(char c) {
         guessedLetters.add(c);
         if (secretWord.indexOf(c) >= 0) {
             return true;
         }
         maxIncorrectGuesses--;
         return false;
+    }
+
+    public boolean isGameOver() {
+        return isWon() || isLost();
     }
 
     public boolean isLost() {
@@ -151,6 +162,6 @@ public class HangmanGame implements GameInterface {
                 sb.append("_ ");
             }
         }
-        System.out.println("Word: " + sb.toString().trim());
+        console.println("Word: " + sb.toString().trim());
     }
 }
