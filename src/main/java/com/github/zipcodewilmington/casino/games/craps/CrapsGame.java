@@ -88,20 +88,17 @@ public class CrapsGame implements GameInterface {
                 }
             }
         }
-}
+    }
 
-/**
- * Rolls two dice, displays their Unicode icons, and updates the dice object.
- */
-public void rollDice() {
-        // Roll the internal dice object (assuming it has a roll method)
-        this.dice.roll(); 
-        
-        // Get the individual values from your dice object
-        // If your Dice class doesn't have these, use: (int)(Math.random() * 6) + 1
-        int die1 = dice.getDie1(); 
+    /**
+     * Rolls two dice, displays their Unicode icons, and updates the dice object.
+     */
+    private void rollDice() {
+        this.dice.roll();
+
+        int die1 = dice.getDie1();
         int die2 = dice.getDie2();
-        
+
         String icon1 = getDiceUnicode(die1);
         String icon2 = getDiceUnicode(die2);
 
