@@ -9,6 +9,8 @@ import com.github.zipcodewilmington.utils.AnsiColor;
 import com.github.zipcodewilmington.utils.IOConsole;
 
 public class BlackjackGame implements GameInterface {
+    private static final String RED = "\u001B[31m";
+    private static final String RESET = "\u001B[0m";
     private Deck deck;
     private BlackjackHand dealerHand;
     private List<PlayerInterface> players;
@@ -19,7 +21,32 @@ public class BlackjackGame implements GameInterface {
         this.dealerHand = new BlackjackHand();
         this.players = new ArrayList<>();
     }
-
+        public void displayCard(String rank, String suit) {
+        String symbol;
+        switch (suit.toLowerCase()) {
+            case "hearts":
+                symbol = RED + "\u2665" + RESET;
+                break;
+            case "diamonds":
+                symbol = RED + "\u2666" + RESET;
+                break;
+            case "spades":
+                symbol = "\u2660";
+                break;
+            case "clubs":
+                symbol = "\u2663";
+                break;
+            default:
+                symbol = "?";
+                break;
+        }
+    
+        System.out.println("┌─────────┐");
+        System.out.printf("│ %-2s      │\n", rank);
+        System.out.printf("│    %s    │\n", symbol);
+        System.out.printf("│      %-2s │\n", rank);
+        System.out.println("└─────────┘");
+    }
     @Override
     public void add(PlayerInterface player) {
         players.add(player);
