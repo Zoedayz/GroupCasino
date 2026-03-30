@@ -31,7 +31,7 @@ public class Casino implements Runnable {
         CasinoAccountManager casinoAccountManager = new CasinoAccountManager();
         do {
             arcadeDashBoardInput = getArcadeDashboardInput();
-            if ("select-game".equals(arcadeDashBoardInput)) {
+            if ("2".equals(arcadeDashBoardInput)) {
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
@@ -40,17 +40,17 @@ public class Casino implements Runnable {
                     String gameSelectionInput;
                     do {
                         gameSelectionInput = getGameSelectionInput().toUpperCase();
-                        if (gameSelectionInput.equals("SLOTS")) {
+                        if (gameSelectionInput.equals("1")) {
                             play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
-                        } else if (gameSelectionInput.equals("NUMBERGUESS")) {
+                        } else if (gameSelectionInput.equals("2")) {
                             play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("BLACKJACK")) {
+                        } else if (gameSelectionInput.equals("3")) {
                             play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("CRAPS")) {
+                        } else if (gameSelectionInput.equals("4")) {
                             play(new CrapsGame(), new CrapsPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("ROULETTE")) {
+                        } else if (gameSelectionInput.equals("5")) {
                             play(new RouletteGame(), new RoulettePlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("HANGMAN")) {
+                        } else if (gameSelectionInput.equals("6")) {
                             play(new HangmanGame(), new HangmanPlayer(casinoAccount.getUsername(), casinoAccount));
                         } else if (!gameSelectionInput.equals("BACK")) {
                             console.println("[ %s ] is an invalid game selection", gameSelectionInput);
@@ -87,14 +87,14 @@ public class Casino implements Runnable {
                 } else {
                     console.println("No account found with name of [ %s ] and password of [ %s ]", accountName, accountPassword);
                 }
-            } else if ("create-account".equals(arcadeDashBoardInput)) {
+            } else if ("1".equals(arcadeDashBoardInput)) {
                 console.println("Welcome to the account-creation screen.");
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount newAccount = casinoAccountManager.createAccount(accountName, accountPassword);
                 casinoAccountManager.registerAccount(newAccount);
                 console.println("Account created! You have been given $500.00 to start.");
-            } else if ("manage-account".equals(arcadeDashBoardInput)) {
+            } else if ("3".equals(arcadeDashBoardInput)) {
                 String accountName = console.getStringInput("Enter your account name:");
                 String accountPassword = console.getStringInput("Enter your account password:");
                 CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
@@ -102,25 +102,41 @@ public class Casino implements Runnable {
                     manageAccount(casinoAccount);
                 } else {
                     String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
-                    console.println(String.format(errorMessage, accountName, accountPassword));
+                    throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
                 }
             }
-        } while (!"logout".equals(arcadeDashBoardInput));
+        } while (!"4".equals(arcadeDashBoardInput));
     }
+
+
 
     private String getArcadeDashboardInput() {
         return console.getStringInput(new StringBuilder()
-                .append("Welcome to the Arcade Dashboard!")
-                .append("\nFrom here, you can select any of the following options:")
-                .append("\n\t[ create-account ], [ select-game ], [ manage-account ], [ logout ]")
-                .toString());
+                .append("\n ╔══════════════════════════════╗")
+                .append("\n║     🎰 WELCOME TO CASINO 🎰   ║")
+        .append("\n╠══════════════════════════════╣")
+        .append("\n║  1. Create Account           ║")
+        .append("\n║  2. Select Game              ║")
+        .append("\n║  3. Manage Account           ║")
+        .append("\n║  4. Logout                   ║")
+        .append("\n╚══════════════════════════════╝")
+        .append("\nEnter a number (1-4): ")
+        .toString());
     }
 
     private String getGameSelectionInput() {
         return console.getStringInput(new StringBuilder()
-                .append("Welcome to the Game Selection Dashboard!")
-                .append("\nFrom here, you can select any of the following options:")
-            .append("\n\t[ SLOTS ], [ NUMBERGUESS ], [ BLACKJACK ], [ CRAPS ], [ ROULETTE ], [ HANGMAN ], [ BACK ]")
+                .append("\n ╔══════════════════════════════╗")
+                .append("\n║  GAME SELECTION DASHBOARD    ║")
+                .append("\n╠══════════════════════════════╣")
+                .append("\n║  1. SLOTS                    ║")
+                .append("\n║  2. NUMBER GUESS             ║")
+                .append("\n║  3. BLACKJACK                ║")
+                .append("\n║  4. CRAPS                    ║")
+                .append("\n║  5. ROULETTE                 ║")
+                .append("\n║  6. HANGMAN                  ║")
+                .append("\n╚══════════════════════════════╝")
+                .append("\nEnter a number (1-6): ")
                 .toString());
     }
 
