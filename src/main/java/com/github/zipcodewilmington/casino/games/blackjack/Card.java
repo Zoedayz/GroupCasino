@@ -42,8 +42,18 @@ public class Card {
 		return suit;
 	}
 
+	private String getSuitSymbol() {
+		switch (suit) {
+			case "Spades":   return "\u2660";  // ♠
+			case "Hearts":   return "\u2665";  // ♥
+			case "Diamonds": return "\u2666";  // ♦
+			case "Clubs":    return "\u2663";  // ♣
+			default:         return suit;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return rank + " of " + suit;
+		return rank + getSuitSymbol();  // e.g. "A♠", "K♥", "10♦", "7♣"
 	}
 }

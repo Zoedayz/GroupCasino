@@ -90,9 +90,42 @@ public class CrapsGame implements GameInterface {
         }
     }
 
-    public void rollDice() {
-        dice.roll();
-        console.println("Rolled: " + dice.toString());
+    /**
+     * Rolls two dice, displays their Unicode icons, and updates the dice object.
+     */
+    private void rollDice() {
+        this.dice.roll();
+
+        int die1 = dice.getDie1();
+        int die2 = dice.getDie2();
+
+        String icon1 = getDiceUnicode(die1);
+        String icon2 = getDiceUnicode(die2);
+
+        console.println("\n[ The dice roll: %s  %s ]", icon1, icon2);
+        console.println("Total: %d", (die1 + die2));
+    }
+
+    /**
+     * Helper to return the Unicode character for a dice face.
+     */
+    private String getDiceUnicode(int value) {
+        switch (value) {
+            case 1:
+                return "\u2680"; // ⚀
+            case 2:
+                return "\u2681"; // ⚁
+            case 3:
+                return "\u2682"; // ⚂
+            case 4:
+                return "\u2683"; // ⚃
+            case 5:
+                return "\u2684"; // ⚄
+            case 6:
+                return "\u2685"; // ⚅
+            default:
+                return "?";
+        }
     }
 
     /**
