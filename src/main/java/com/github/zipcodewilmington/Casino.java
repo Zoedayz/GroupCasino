@@ -29,63 +29,65 @@ public class Casino implements Runnable {
     public void run() {
         String arcadeDashBoardInput;
         CasinoAccountManager casinoAccountManager = new CasinoAccountManager();
+        CasinoAccount currentAccount = null;
         do {
-            arcadeDashBoardInput = getArcadeDashboardInput();
+            arcadeDashBoardInput = getArcadeDashboardInput(currentAccount);
             if ("2".equals(arcadeDashBoardInput)) {
-                String accountName = console.getStringInput("Enter your account name:");
-                String accountPassword = console.getStringInput("Enter your account password:");
-                CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
-                boolean isValidLogin = casinoAccount != null;
-                if (isValidLogin) {
-                    String gameSelectionInput;
-                    do {
-                        gameSelectionInput = getGameSelectionInput().toUpperCase();
-                        if (gameSelectionInput.equals("1")) {
-                            play(new SlotsGame(), new SlotsPlayer(casinoAccount.getUsername(), casinoAccount));
-                        } else if (gameSelectionInput.equals("2")) {
-                            play(new NumberGuessGame(), new NumberGuessPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("3")) {
-                            play(new BlackjackGame(), new BlackjackPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("4")) {
-                            play(new CrapsGame(), new CrapsPlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("5")) {
-                            play(new RouletteGame(), new RoulettePlayer(casinoAccount));
-                        } else if (gameSelectionInput.equals("6")) {
-                            play(new HangmanGame(), new HangmanPlayer(casinoAccount.getUsername(), casinoAccount));
-                        } else if (!gameSelectionInput.equals("BACK")) {
-                            console.println("[ %s ] is an invalid game selection", gameSelectionInput);
-                        }
-                    } while (!gameSelectionInput.equals("BACK") && casinoAccount.getBalance() > 0);
-
-                    if (casinoAccount.getBalance() <= 0) {
-                        console.println(
-                "\n" +
-    "  _____  _____  _____  _   _ \n" +
-    " |_   _||_   _||  ___|| \\ | |\n" +
-    "   | |    | |  | |_   |  \\| |\n" +
-    "   | |    | |  |  _|  | |\\ |\n" +
-    "   |_|    |_|  |_|    |_| \\_|\n" +
-    "\n" +
-    "  __  __  ___  _   _     _   ____  _____ \n" +
-    "  \\ \\/ / / _ \\| | | |   / \\ |  _ \\| ____|\n" +
-    "   \\  / | | | | | | |  / _ \\| |_) |  _|  \n" +
-    "   / /  | |_| | |_| | / ___ \\|  _ <| |___\n" +
-    "  /_/    \\___/ \\___/ /_/   \\_\\_| \\_\\_____|\n" +
-    "\n" +
-    "  ____  ____  ___  _  __ _____\n" +
-    " | __ )|  _ \\/ _ \\| |/ /| ____|\n" +
-    " |  _ \\| |_) | | | | ' /|  _|  \n" +
-    " | |_) |  _ <| |_| | . \\| |___\n" +
-    " |____/|_| \\_\\\\___/|_|\\_\\|_____|\n" +
-    "\n" +
-    "  +------------------------------------------+\n" +
-    "  |  Ta Ta For Now... and your money too!    |\n" +
-    "  |     The house ALWAYS wins! >:)           |\n" +
-    "  +------------------------------------------+\n"
-            );
+                if (currentAccount == null) {
+                    String accountName = console.getStringInput("Enter your account name:");
+                    String accountPassword = console.getStringInput("Enter your account password:");
+                    currentAccount = casinoAccountManager.getAccount(accountName, accountPassword);
+                    if (currentAccount == null) {
+                        console.println("No account found with name of [ %s ] and password of [ %s ]", accountName, accountPassword);
+                        continue;
                     }
-                } else {
-                    console.println("No account found with name of [ %s ] and password of [ %s ]", accountName, accountPassword);
+                }
+                String gameSelectionInput;
+                do {
+                    gameSelectionInput = getGameSelectionInput().toUpperCase();
+                    if (gameSelectionInput.equals("1")) {
+                        play(new SlotsGame(), new SlotsPlayer(currentAccount.getUsername(), currentAccount));
+                    } else if (gameSelectionInput.equals("2")) {
+                        play(new NumberGuessGame(), new NumberGuessPlayer(currentAccount));
+                    } else if (gameSelectionInput.equals("3")) {
+                        play(new BlackjackGame(), new BlackjackPlayer(currentAccount));
+                    } else if (gameSelectionInput.equals("4")) {
+                        play(new CrapsGame(), new CrapsPlayer(currentAccount));
+                    } else if (gameSelectionInput.equals("5")) {
+                        play(new RouletteGame(), new RoulettePlayer(currentAccount));
+                    } else if (gameSelectionInput.equals("6")) {
+                        play(new HangmanGame(), new HangmanPlayer(currentAccount.getUsername(), currentAccount));
+                    } else if (!gameSelectionInput.equals("7")) {
+                        console.println("[ %s ] is an invalid game selection", gameSelectionInput);
+                    }
+                } while (!gameSelectionInput.equals("7") && currentAccount.getBalance() > 0);
+
+                if (currentAccount.getBalance() <= 0) {
+                    console.println(
+            "\n" +
+"  _____  _____  _____  _   _ \n" +
+" |_   _||_   _||  ___|| \\ | |\n" +
+"   | |    | |  | |_   |  \\| |\n" +
+"   | |    | |  |  _|  | |\\ |\n" +
+"   |_|    |_|  |_|    |_| \\_|\n" +
+"\n" +
+"  __  __  ___  _   _     _   ____  _____ \n" +
+"  \\ \\/ / / _ \\| | | |   / \\ |  _ \\| ____|\n" +
+"   \\  / | | | | | | |  / _ \\| |_) |  _|  \n" +
+"   / /  | |_| | |_| | / ___ \\|  _ <| |___\n" +
+"  /_/    \\___/ \\___/ /_/   \\_\\_| \\_\\_____|\n" +
+"\n" +
+"  ____  ____  ___  _  __ _____\n" +
+" | __ )|  _ \\/ _ \\| |/ /| ____|\n" +
+" |  _ \\| |_) | | | | ' /|  _|  \n" +
+" | |_) |  _ <| |_| | . \\| |___\n" +
+" |____/|_| \\_\\\\___/|_|\\_\\|_____|\n" +
+"\n" +
+"  +------------------------------------------+\n" +
+"  |  Ta Ta For Now... and your money too!    |\n" +
+"  |     The house ALWAYS wins! >:)           |\n" +
+"  +------------------------------------------+\n"
+                    );
                 }
             } else if ("1".equals(arcadeDashBoardInput)) {
                 console.println("Welcome to the account-creation screen.");
@@ -95,33 +97,44 @@ public class Casino implements Runnable {
                 casinoAccountManager.registerAccount(newAccount);
                 console.println("Account created! You have been given $500.00 to start.");
             } else if ("3".equals(arcadeDashBoardInput)) {
-                String accountName = console.getStringInput("Enter your account name:");
-                String accountPassword = console.getStringInput("Enter your account password:");
-                CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
-                if (casinoAccount != null) {
-                    manageAccount(casinoAccount);
-                } else {
-                    String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
-                    throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
+                if (currentAccount == null) {
+                    String accountName = console.getStringInput("Enter your account name:");
+                    String accountPassword = console.getStringInput("Enter your account password:");
+                    currentAccount = casinoAccountManager.getAccount(accountName, accountPassword);
+                    if (currentAccount == null) {
+                        console.println("No account found with name of [ %s ] and password of [ %s ]", accountName, accountPassword);
+                        continue;
+                    }
+                }
+                manageAccount(currentAccount);
+            } else if ("4".equals(arcadeDashBoardInput)) {
+                if (currentAccount != null) {
+                    console.println("Logged out of [ %s ].", currentAccount.getUsername());
+                    currentAccount = null;
+                    arcadeDashBoardInput = ""; // don't exit, just log out
                 }
             }
-        } while (!"4".equals(arcadeDashBoardInput));
+        } while (!"5".equals(arcadeDashBoardInput));
     }
 
 
 
-    private String getArcadeDashboardInput() {
-        return console.getStringInput(new StringBuilder()
+    private String getArcadeDashboardInput(CasinoAccount currentAccount) {
+        StringBuilder sb = new StringBuilder()
                 .append("\n ╔══════════════════════════════╗")
-                .append("\n║     🎰 WELCOME TO CASINO 🎰   ║")
-        .append("\n╠══════════════════════════════╣")
-        .append("\n║  1. Create Account           ║")
-        .append("\n║  2. Select Game              ║")
-        .append("\n║  3. Manage Account           ║")
-        .append("\n║  4. Logout                   ║")
-        .append("\n╚══════════════════════════════╝")
-        .append("\nEnter a number (1-4): ")
-        .toString());
+                .append("\n║     🎰 WELCOME TO CASINO 🎰   ║");
+        if (currentAccount != null) {
+            sb.append(String.format("\n║  Logged in: %-17s║", currentAccount.getUsername()));
+        }
+        sb.append("\n╠══════════════════════════════╣")
+          .append("\n║  1. Create Account           ║")
+          .append("\n║  2. Select Game              ║")
+          .append("\n║  3. Manage Account           ║")
+          .append("\n║  4. Logout                   ║")
+          .append("\n║  5. Exit                     ║")
+          .append("\n╚══════════════════════════════╝")
+          .append("\nEnter a number (1-5): ");
+        return console.getStringInput(sb.toString());
     }
 
     private String getGameSelectionInput() {
@@ -135,8 +148,9 @@ public class Casino implements Runnable {
                 .append("\n║  4. CRAPS                    ║")
                 .append("\n║  5. ROULETTE                 ║")
                 .append("\n║  6. HANGMAN                  ║")
+                .append("\n║  7. Back                     ║")
                 .append("\n╚══════════════════════════════╝")
-                .append("\nEnter a number (1-6): ")
+                .append("\nEnter a number (1-7): ")
                 .toString());
     }
 
