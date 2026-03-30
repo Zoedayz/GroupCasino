@@ -1,11 +1,11 @@
 package com.github.zipcodewilmington.casino.games.roulette;
 
+import java.util.Random;
+import java.util.Scanner;
+
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
-
-import java.util.Random;
-import java.util.Scanner;
 
 public class RouletteGame implements GameInterface {
 

@@ -13,7 +13,7 @@ public class BlackjackGame implements GameInterface {
     private static final String RESET = "\u001B[0m";
     private Deck deck;
     private BlackjackHand dealerHand;
-    private List<PlayerInterface> players;
+    private List<BlackjackPlayer> players;
     private final IOConsole console = new IOConsole(AnsiColor.BLUE);
 
     public BlackjackGame() {
@@ -49,12 +49,12 @@ public class BlackjackGame implements GameInterface {
     }
     @Override
     public void add(PlayerInterface player) {
-        players.add(player);
+        players.add((BlackjackPlayer) player);
     }
 
     @Override
     public void remove(PlayerInterface player) {
-        players.remove(player);
+        players.remove((BlackjackPlayer) player);
     }
 
     @Override
@@ -76,14 +76,12 @@ public class BlackjackGame implements GameInterface {
         deck.shuffle();
         dealerHand.clear();
 
-        for (PlayerInterface p : players) {
-            BlackjackPlayer bp = (BlackjackPlayer) p;
+        for (BlackjackPlayer bp : players) {
             bp.resetHand();
         }
 
         // take bets
-        for (PlayerInterface p : players) {
-            BlackjackPlayer bp = (BlackjackPlayer) p;
+        for (BlackjackPlayer bp : players) {
             console.println("\n%s, your balance is $%.2f",
                 bp.fetchCasinoAccount().getUsername(),
                 bp.fetchCasinoAccount().getBalance());
@@ -96,8 +94,7 @@ public class BlackjackGame implements GameInterface {
         // show hands — dealer hides second card
         console.println("\nDealer shows: %s [hidden]",
             dealerHand.toString().split(",")[0]);
-        for (PlayerInterface p : players) {
-            BlackjackPlayer bp = (BlackjackPlayer) p;
+        for (BlackjackPlayer bp : players) {
             console.println("%s's hand: %s",
                 bp.fetchCasinoAccount().getUsername(),
                 bp.getHand().toString());
@@ -130,9 +127,9 @@ public class BlackjackGame implements GameInterface {
     }
 
     private void dealInitialCards() {
-        for (PlayerInterface p : players) {
-            ((BlackjackPlayer) p).getHand().addCard(deck.deal());
-            ((BlackjackPlayer) p).getHand().addCard(deck.deal());
+        for (BlackjackPlayer bp : players) {
+            bp.getHand().addCard(deck.deal());
+            bp.getHand().addCard(deck.deal());
         }
         dealerHand.addCard(deck.deal());
         dealerHand.addCard(deck.deal());
@@ -146,8 +143,7 @@ public class BlackjackGame implements GameInterface {
             console.println("\nDealer reveals: %s", dealerHand.toString());
         }
 
-        for (PlayerInterface p : players) {
-            BlackjackPlayer bp = (BlackjackPlayer) p;
+        for (BlackjackPlayer bp : players) {
             boolean playerBJ = bp.getHand().isBlackjack();
 
             if (playerBJ || dealerBJ) {
